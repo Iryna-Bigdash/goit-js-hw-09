@@ -16,7 +16,8 @@ function onStartBtnClick(e) {
   }, CHANGE_COLOR_DELAY);
 
   if (refs.startBtn) {
-    return (refs.startBtn.disabled = true);
+    refs.startBtn.disabled = true;
+    refs.stopBtn.disabled = false;
   }
 }
 
@@ -24,7 +25,10 @@ function onStopBtnClick(e) {
   clearInterval(timeIntervalId);
 
   if (refs.stopBtn) {
-    return (refs.startBtn.disabled = false);
+    refs.startBtn.disabled = false;
+    refs.stopBtn.disabled = true;
+     
+    
   }
 }
 

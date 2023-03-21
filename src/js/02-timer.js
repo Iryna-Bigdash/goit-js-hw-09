@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
   datePickerInput: document.querySelector('#datetime-picker'),
@@ -11,6 +12,7 @@ const refs = {
 };
 
 refs.startBtn.addEventListener('click', onstartBtnRunTimer);
+refs.startBtn.setAttribute('disabled', true);
 
 let chosenDate = 0;
 let intervalId = null;
@@ -22,34 +24,9 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     console.log(selectedDates[0]);
-    onstartBtnRunTimer(selectedDates[0]);
-
-    if (selectedDates) {
-    }
+    onchoseDate(selectedDates[0]);
   },
-  disable: [
-    function (date) {
-      // return true to disable
-      return date < new Date();
-    },
-  ],
 };
-
-function onstartBtnRunTimer(selectedDates) {
-  chosenDate = selectedDates.getTime();
-
-  if (selectedDates < Date.now()) {
-    window.alert('Please choose a date in the future');
-    refs.startBtn.setAttribute('disabled', true);
-  }
-
-   else if (selectedDates >= Date.now()) {
-    refs.datePickerInput.setAttribute('disabled', false);
-    refs.startBtn.setAttribute('disabled', false);
-     timer.start();
-  }
- 
-}
 
 const timer = {
   isActive: false,
@@ -57,13 +34,13 @@ const timer = {
   start() {
     if (this.isActive) {
       refs.datePickerInput.setAttribute('disabled', true);
+      refs.startBtn.setAttribute('disabled', true);
       return;
     }
 
     this.isActive = true;
 
     intervalId = setInterval(() => {
-
       const currenTime = Date.now();
       const deltaTime = chosenDate - currenTime;
       const time = convertMs(deltaTime);
@@ -72,11 +49,27 @@ const timer = {
     }, 1000);
 
     if (deltaTime === 0) {
-      window.alert('Time has run');
+      Notify.success('Time has run');
       clearInterval(intervalId);
     }
   },
 };
+
+function onchoseDate(selectedDates) {
+  chosenDate = selectedDates.getTime();
+
+  if (selectedDates < Date.now()) {
+    Notify.failure('Please choose a date in the future');
+  }
+
+  if (selectedDates >= Date.now()) {
+    refs.startBtn.removeAttribute('disabled');
+  }
+}
+
+function onstartBtnRunTimer() {
+  timer.start();
+}
 
 flatpickr('#datetime-picker', options);
 
