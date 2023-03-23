@@ -16,7 +16,6 @@ refs.startBtn.setAttribute('disabled', true);
 
 let chosenDate = null;
 let intervalId = null;
-let deltaTime = null;
 
 const options = {
   enableTime: true,
@@ -26,33 +25,6 @@ const options = {
   onClose(selectedDates) {
     console.log(selectedDates[0]);
     onchoseDate(selectedDates[0]);
-  },
-};
-
-const timer = {
-  isActive: false,
-
-  start() {
-    if (this.isActive) {
-      refs.datePickerInput.setAttribute('disabled', true);
-      refs.startBtn.setAttribute('disabled', true);
-      return;
-    }
-
-    this.isActive = true;
-
-    intervalId = setInterval(() => {
-      const currenTime = Date.now();
-      deltaTime = chosenDate - currenTime;
-      const time = convertMs(deltaTime);
-
-      updateTimerUi(time);
-    }, 1000);
-
-    if (deltaTime === 0) {
-      Notify.success('Time has run');
-      clearInterval(intervalId);
-    }
   },
 };
 
@@ -68,6 +40,33 @@ function onchoseDate(selectedDates) {
     refs.startBtn.removeAttribute('disabled');
   }
 }
+
+const timer = {
+  isActive: false,
+
+  start() {
+    this.isActive = true;
+
+    if (this.isActive) {
+      refs.datePickerInput.setAttribute('disabled', true);
+      refs.startBtn.setAttribute('disabled', true);
+    }
+
+    intervalId = setInterval(() => {
+      const currentTime = Date.now();
+      deltaTime = chosenDate - currentTime;
+
+      if (deltaTime <= 0) {
+        Notify.success('Time has run');
+        clearInterval(intervalId);
+        this.isActive = false;
+      } else {
+        const time = convertMs(deltaTime);
+        updateTimerUi(time);
+      }
+    }, 1000);
+  },
+};
 
 function onstartBtnRunTimer() {
   timer.start();
