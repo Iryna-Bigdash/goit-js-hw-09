@@ -54,7 +54,7 @@ const timer = {
 
     intervalId = setInterval(() => {
       const currentTime = Date.now();
-      deltaTime = chosenDate - currentTime;
+      const deltaTime = chosenDate - currentTime;
 
       if (deltaTime <= 0) {
         Notify.success('Time has run');
