@@ -14,8 +14,9 @@ const refs = {
 refs.startBtn.addEventListener('click', onstartBtnRunTimer);
 refs.startBtn.setAttribute('disabled', true);
 
-let chosenDate = 0;
+let chosenDate = null;
 let intervalId = null;
+let deltaTime = null;
 
 const options = {
   enableTime: true,
@@ -42,7 +43,7 @@ const timer = {
 
     intervalId = setInterval(() => {
       const currenTime = Date.now();
-      const deltaTime = chosenDate - currenTime;
+      deltaTime = chosenDate - currenTime;
       const time = convertMs(deltaTime);
 
       updateTimerUi(time);
@@ -60,6 +61,7 @@ function onchoseDate(selectedDates) {
 
   if (selectedDates < Date.now()) {
     Notify.failure('Please choose a date in the future');
+    return;
   }
 
   if (selectedDates >= Date.now()) {
